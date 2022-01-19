@@ -5,8 +5,8 @@
  */
 export function criaScript(urls) {
     urls.forEach(element => {
-        var divEl = document.createElement("script")
-        divEl.setAttribute('src', element)
-        document.querySelector("body").appendChild(divEl)
+        var script = document.createElement("script")
+        script.setAttribute('src', element)
+        document.querySelector("body").appendChild(script)
     });
 }
