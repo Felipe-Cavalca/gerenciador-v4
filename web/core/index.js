@@ -1,5 +1,5 @@
 //dominio da aplicação
-const dominio = "http://localhost/lis/";
+const dominio = "http://localhost/gerenciador/v4/";
 
 //caminhos para as pastas da aplicação
 const URLS = {
