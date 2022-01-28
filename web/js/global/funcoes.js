@@ -2,7 +2,7 @@ function initVueDefault(e){
     const pagina = {
         data() {
             return {
-                _Vars: _Vars
+                VarsGlobal: VarsGlobal
             }
         }
     }

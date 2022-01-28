@@ -1,3 +1,3 @@
-const _Vars = {
+const VarsGlobal = {
     'nomeApp' : 'Gerenciador'
 };
