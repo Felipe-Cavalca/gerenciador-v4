@@ -19,6 +19,8 @@ export const linksFramework = [
     URLS.dominioFramework + "jquery-3.6.0.js",
     URLS.dominioFramework + "materialize/js/materialize.js",
     URLS.dominioFramework + "vue.global.js",
+    URLS.dominioJs + "global/variaveis.js",
+    URLS.dominioJs + "global/funcoes.js",
 ];
 
 
