@@ -1,11 +1,11 @@
 <?php
 
-$_NomeApp = "Gerenciador";
+$_NomeApp = "Lis";
 $_Retorno = [];
 
 //Banco
 $_HostBanco = 'localhost';
 $_PortaBanco = '3307';
-$_NomeBanco = 'gerenciador';
+$_NomeBanco = 'Lis';
 $_UsuarioBanco = 'root';
 $_SenhaBanco = '';
