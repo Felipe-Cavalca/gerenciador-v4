@@ -13,7 +13,8 @@ const URLS = {
     "dominioPages" : dominio + "pages/",
     "dominioJsGlobal" : dominio + "web/js/global/",
     "dominioImg" : dominio + "web/img/",
-    'dominioComponents' : dominio + "web/components/"
+    "dominioComponents" : dominio + "web/components/",
+    "dominioErros" : dominio + "web/error/"
 }
 
 //links a serem incluidos na pagina
@@ -26,7 +27,6 @@ const scriptsGlobais = [
 ];
 
 const stylesGlobais = [
-    URLS.dominioCore+"index.css",
     URLS.dominioFramework + "materialize/css/materialize.css",
     "https://fonts.googleapis.com/icon?family=Material+Icons"
 ]
@@ -39,57 +39,22 @@ const stylesGlobais = [
  * @param {arr} urls - array das urls
  * Adiciona as tags de script e link a tela
  */
-function incluiScript(scripts, styles) {
+function incluiScript(links, tipo) {
 
-    if(styles){
-        styles.forEach(url => {
+    if(tipo == 'css'){
+        links.forEach(url => {
             var style = document.createElement("link");
             style.setAttribute('rel', "stylesheet");
             style.setAttribute('href', substituiCaminho(url));
             document.querySelector("head").appendChild(style);
         });
-    }
-
-    //incluindo links dos frameworks
-    if(scripts){
-        scripts.forEach(url => {
+    }else{
+        links.forEach(url => {
             var script = document.createElement("script");
             script.setAttribute('src', url);
             document.querySelector("body").appendChild(script);
         });
     }
-
-    //incluindo scripts dos usuarios
-    if(Lis.scripts){
-        Lis.scripts.forEach(url => {
-            var script = document.createElement("script");
-            script.setAttribute('src', substituiCaminho(url));
-            document.querySelector("body").appendChild(script);
-        });
-    }
-
-    //incluindo arquivos css do usuario
-    if(Lis.styles){
-        Lis.styles.forEach(url => {
-            var style = document.createElement("link");
-            style.setAttribute('rel', "stylesheet");
-            style.setAttribute('href', substituiCaminho(url));
-            document.querySelector("head").appendChild(style);
-        });
-    }
-
-    if (Lis && typeof Lis.init === 'function') {
-        //aguarda o carregamento das paginas e executa o init
-        //necessario alterar para uma função que detecte o carregamento
-        setTimeout(function () {
-            Lis.init();
-            setTimeout(function () {
-                //apos o carregamento some a tela de carregamento
-                Lis.carregandoHide();
-            }, 300);
-        }, 1000);
-    }
-
 }
 
 /**
@@ -125,6 +90,87 @@ function criarCarregando(){
     var body = document.querySelector('body');
     body.setAttribute('class', 'scale-transition scale-out');
     body.setAttribute('style', 'display: none;');
+}
+
+function createMeta(){
+    //os elementos meta
+    var meta = document.createElement("meta");
+    meta.setAttribute('name', 'viewport');
+    meta.setAttribute('content', 'width=device-width, initial-scale=1.0');
+    document.querySelector("head").prepend(meta);
+
+    var meta = document.createElement("meta");
+    meta.setAttribute('http-equiv', 'X-UA-Compatible');
+    meta.setAttribute('content', 'IE=edge');
+    document.querySelector("head").prepend(meta);
+
+    var meta = document.createElement("meta");
+    meta.setAttribute('charset', 'utf-8');
+    document.querySelector("head").prepend(meta);
+
+    var html = document.querySelector('html');
+    html.setAttribute('lang', 'pt-br');
+}
+
+function init(){
+    criarCarregando();
+
+    incluiScript([URLS.dominioCore+"index.css"], 'css');
+
+    document.querySelector('carregando img').onload = function () {
+        if(document.querySelector("nav") == null && Lis.nav != false){
+            Lis.createComponent('nav', "body");
+        }
+
+        createMeta();
+
+        incluiScript(stylesGlobais, 'css');
+        incluiScript(scriptsGlobais, 'js');
+
+        //incluindo arquivos css do usuario
+        if(Lis.styles){
+            incluiScript(stylesGlobais, 'css');
+        }
+        //incluindo scripts dos usuarios
+        if(Lis.scripts){
+            incluiScript(scriptsGlobais, 'js');
+        }
+
+        if (Lis && typeof Lis.init === 'function') {
+            //aguarda o carregamento das paginas e executa o init
+            document.querySelector('body').onload = function () {
+                Lis.init();
+
+                if(Lis.nav != false){
+                    //valida se o vue existe
+                    if(typeof window.Vue !== 'undefined'){
+                        window.initVueDefault(document.querySelector('nav'));
+                    }
+                }
+
+                setTimeout(function () {
+                    //apos o carregamento some a tela de carregamento
+                    Lis.carregandoHide();
+                }, 300);
+            }
+        }
+    }
+
+    document.querySelector('body').onbeforeunload = function (a) {
+        alert('onbeforeunload');
+        alert(a);
+    }
+
+    document.querySelector('body').onunload = function (a) {
+        alert('onunload');
+        alert(a);
+    }
+
+    document.querySelector('body').onerror = function (erro) {
+        if(window.location.href != URLS.dominioErros+"700.html"){
+            window.location.href = URLS.dominioErros+"700.html";
+        }
+    }
 }
 
 //incluindo variaveis na Lis ==================================
@@ -183,7 +229,7 @@ Lis.carregandoHide = function (){
  */
 Lis.carregandoShow = function (){
     const carregando = document.querySelector('carregando');
-    const pagina = document.querySelector('body')
+    const pagina = document.querySelector('body');
 
     pagina.classList.remove("scale-in");
     pagina.classList.add("scale-out");
@@ -209,6 +255,4 @@ Lis.createComponent = function (component, element){
 }
 
 //iniciando a pagina ===========================================
-criarCarregando();
-Lis.createComponent('nav', "body");
-incluiScript(scriptsGlobais, stylesGlobais);
+init();
